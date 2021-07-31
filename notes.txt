@@ -1,0 +1,2820 @@
+CI-CDe-CD
+
+CI - cont. integration
+CDe - cont. delivery
+CD - cont. deployment
+
+Tools summary:
+
+Dev-
+
+1. version control system : git, bitbucket (atlassian product - licensed), github (open source)
+2. ci tool - jenkins (opensource)/bamboo (atlassian)/teamcity - lifeline of the devops pipeline
+3. build tool - java - maven/gradle/ant, .net - msbuild/nant 
+4. code reviews tools - crucible (atlassian), gerrit
+5. code quality tool - sonarqube
+6. artifactory management tool - nexus (opensource), jfrog(licensed)
+7. testing tool - 
+	7.1 unit testing (junit/nunit), 
+	7.2 regression testing (selenium/cucmber/qmetry)
+8. deployment tool - bamboo (CI/CD), jenkins (no CD)
+9. project management/workflow management tool - jira (atlassian)
+
+Ops-
+
+10. containerization tool - docker, kubernetes
+11. configuration management tool - ansible, chef,puppet 
+12. cloud environment - aws
+
+
+Workflow:
+
+1. 
+
+9,2 --> 1, (3,7.1),4,5,6,8,7.2,(((10/11)-12)) --> 9
+
+
+2.
+
+9,2 --> 1, 4, 5, (3,7.1),6,8,7.2,(((10/11)-12)) --> 9
+
+
+
+
+
+
+version -> epic -> user stories/bug -> tasks -> sub-tasks
+
+
+to do -> in progress -> code review/pull request created -> pull request merged-> build -> deployed -> done
+
+
+jenkins
+
+1. maven work - 1
+2. unit testing works with maven - 1
+3. sonarqube integrates with jenkins - 1
+4. sonarqube code analysis - 1
+5. quality gate implementation in sonarqube - 1 
+6. security settings in jenkins - 1
+7. understand the concept of master slave - 1
+8. apache tomcat implementation - 1
+9. ci and cd in jenkins - 1
+10. how to configure jobs in jenkins - 1
+11. rest api in jenkins - 1
+12. .net builds - 1  
+13. docker - 1
+14. aws services - 1
+15. db changes via CICD - redagte, liquibase, dbfit testing, flyway db testing
+
+vSphere, Vmware
+
+neelam5593@gmail.com
+
+redgate
+liquibase
+flyway
+dbfit
+
+apt-get install docker
+
+docker pull jenkins 
+
+cd docker> jenkins 
+
+docker run jenkins -p 8080:8080
+
+docker ps 
+kojr8343843yhgkrfk348y93384hf  
+ps -ef
+
+docker images
+
+docker build 
+
+dockerfile
+
+
+fibonacci series
+0-9 = 45
+0+1=1
+1+2=3
+2+3=5
+45
+
+sum
+add
+jod do
+
+code - git, bitbucket
+code review - pull request
+code quality - sonarqube
+unit testing - junit
+build - maven
+CI - jenkins
+CD - jenkins + tomcat
+
+
+urban code deploy - db, java, control-m
+octopus deploy - .net deployments
+
+
+CI-CDe-CD
+
+CI - cont. integration
+CDe - cont. delivery
+CD - cont. deployment
+
+Tools summary:
+
+Dev-
+
+1. version control system : git, bitbucket (atlassian product - licensed), github (open source)
+2. ci tool - jenkins (opensource)/bamboo (atlassian)/teamcity - lifeline of the devops pipeline
+3. build tool - java - maven/gradle/ant, .net - msbuild/nant 
+4. code reviews tools - crucible (atlassian), gerrit
+5. code quality tool - sonarqube
+6. artifactory management tool - nexus (opensource), jfrog(licensed)
+7. testing tool - 
+	7.1 unit testing (junit/nunit), 
+	7.2 regression testing (selenium/cucmber/qmetry)
+8. deployment tool - bamboo (CI/CD), jenkins (no CD)
+9. project management/workflow management tool - jira (atlassian)
+
+Ops-
+
+10. containerization tool - docker, kubernetes
+11. configuration management tool - ansible, chef,puppet 
+12. cloud environment - aws
+
+Tools summary:
+
+1. Version control system : Git & Github 
+2. CICD - Jenkins 
+3. Build - Maven
+4. Code quality- Sonarqube
+5. Unit testing - JUnit
+
+containerization tol - docker, kubernetes
+
+11. configuration management tool - ansible, chef,puppet 
+12. cloud environment - aws
+
+
+Workflow:
+
+1. 
+
+9,2 --> 1, (3,7.1),4,5,6,8,7.2,(((10/11)-12)) --> 9
+
+
+2.
+
+9,2 --> 1, 4, 5, (3,7.1),6,8,7.2,(((10/11)-12)) --> 9
+
+
+First of all get the list of all the quality gates being used using this API URL:
+
+http://localhost:9000/api/qualitygates/list    -> in place of localhost:9000 use your sonarqube server ipaddress:9000
+
+This will list all the quality gates. For ex. I have two quality gates in my sonarqube server. So here is what this API call will return:
+
+{"qualitygates":[{"id":1,"name":"Sonar way","isDefault":true,"isBuiltIn":true,"actions":{"rename":false,"setAsDefault":false,"copy":true,"associateProjects":false,"delete":false,"manageConditions":false}},{"id":3,"name":"critical_issues","isDefault":false,"isBuiltIn":false,"actions":{"rename":true,"setAsDefault":true,"copy":true,"associateProjects":true,"delete":true,"manageConditions":true}}],"default":1,"actions":{"create":true}}
+
+After that choose the quality gate which you want to modify by using their ID. I will modify the quality gate with id no. 3.
+
+Use this API call to display the content of a particular quality gate.
+
+http://localhost:9000/api/qualitygates/show?id=3
+
+The output will be like this:
+
+{"id":3,"name":"critical_issues","conditions":[{"id":34,"metric":"critical_violations","op":"GT","warning":"4","error":"5"}],"isBuiltIn":false,"actions":{"rename":true,"setAsDefault":true,"copy":true,"associateProjects":true,"delete":true,"manageConditions":true}}
+
+
+Now, in order to  modify the values of the metrics being used in the quality gate automatically via API call use the following API call:
+
+curl -u admin:admin -X POST "http://localhost:9000/api/qualitygates/update_condition?gateId=3&id=34&metric=critical_violations&op=GT&warning=5&error=7"
+
+
+For this particular API call, you will first have to install CURL on your server and then use it's command line utility to run this API call.
+
+When you hit enter, this API call will connect to your sonarqube server and will change the values of the "critical_violations" metric warning and error no. to 0 & 2 from 4 & 5 as can be seen in the output of the previous API call.
+
+Now if you go and check the quality gate status in sonarqube server, you will see that the metric value has been changed to 0 & 2. You can verify the same by using the same API call again.
+
+http://localhost:9000/api/qualitygates/show?id=3
+
+The result would be:
+
+{"id":3,"name":"critical_issues","conditions":[{"id":34,"metric":"critical_violations","op":"GT","warning":"0","error":"2"}],"isBuiltIn":false,"actions":{"rename":true,"setAsDefault":true,"copy":true,"associateProjects":true,"delete":true,"manageConditions":true}}
+
+
+This is how you can autmatically modify the values of any quality gate metric by using simple sonarqube API calls.
+
+
+For ref please see this link: https://docs.sonarqube.org/pages/viewpage.action?pageId=2392167 
+
+
+
+version control system / source code management - central hub/ central repository (where we store our code)
+
+repository - where we store our code
+
+central repository - where all the repositories are stored
+
+windows machine / linux machine
+
+
+today is the start of your project - 10 lines of code - v1
+									 10 linesof code - 20 linesof code - v2
+									 10
+									 10
+									 10                50 - v5
+									
+GIT -  .git repositories - DVCS tool - distributed version control system
+
+
+Git - iphone
+Bitbucket - icloud
+
+git is where we store our code in the form of repositories - and then we store these repositoriesin bitbucket (cloud)
+
+iphone is where we have our data - then this data is stored in icloud
+
+1. create an account on bitbucket cloud
+2. create a new repository in bitbucket cloud
+3. create a readme file in the new repository
+4. install git bash on your local system
+
+development 
+dev 1
+dev 2
+dev 3
+
+integration
+int 1
+int 2
+int 3
+
+tags - snapshot
+tags 1 - dev, qa, uat, prod
+tags 2
+tags 3
+.
+.
+.
+.
+.
+tags n
+
+trunk (master) - commit hook which says that no one can directly commit in trunk, has to be via merging 
+
+git tag_1.0.0 feature1 
+
+
+cvs2git - convert the .cvs extension files to .git - blob.dat and data.dat
+svn2git - .svn to .git
+git-fastimport
+
+ssh-keygen - public key, private key
+
+10.1.1.1 - host server ssh-keygen public,private
+
+oauth token - enterprise version  - application links - oauth token
+
+
+git repositories - the repositories present in your local system
+
+bitbucket repositories - the repositories hosted on the bitbucket cloud
+
+
+
+two things to remember:
+
+1. in order to send/push yur code froom the local machine where u r using eclipse (example), to the bitbucket repository - git bash
+
+---> we createa a clone of the karthik repo in our local machine
+---> after we do that, there will a be a readme file cpied into the local folder where i did the clone of the karthiuk repo
+--->to add some new piece of code into the local karthik repo
+---> my target is to send/push the code from my local machine to the bitbucket repo
+
+
+important commands:
+
+1. git clone repourl
+
+2. git add . ( the dot over here specifies the current working location in your local machine)
+
+3. git commit -m "commit message" (-m specifies the parameter where u have to pass the commit message in double codes)
+
+4. git push origin master (just think of it as a copy command where we have to give a cource and destination location)
+
+
+2. suppse someone from ur team sitting in africa has developed a piece of codeand he has send/push that into the bitbucket repository, 
+
+how will u get that cde into your local machine - git bash
+
+clone - is to create a copy/duplicate
+
+HTTPS - we use this link while making a cpy of the code in a windows machine
+
+
+
+branches - feature branches are created for the developers so that they can work on those branches, develop their code individually in those 
+branches and then finally when there work is complete they can merge their feature branch into the master branch, so that in the end there will,be again
+just one master branch present in the repo
+
+
+task :
+
+1. clone 
+2. add some new files
+3. commit
+4. push 
+
+
+1. whenever you will create a new branch in any repo, it will always be created from the master branch only
+2. because the feature branches have been created from the master branch only, they will have the same code as of the master branch
+3. in the end, in most of the cases/real time projects, all the feature branches are deleted or i shall say merged in the master branch once their task is done
+4. before we delete the feature branch 1, we have to make sure that we MERGE it into the master branch
+5. concept of pull request - before you merge the feature branch into the master branch, you will have to take approval from your manager/lead/client
+6. merging - the concept of merging the feature branch into the master branch after the pull request approval, so that the code changes done in the feature 
+branch will be automatically replicated into the master branch
+7. same concept of pull request and merging showcased in github also
+
+
+git, bitucket, github - what is git, git repo, what is bitbucket, local cloud, git commands, how to fetch code from bitbucket to local and vice versa, branches, 
+				pull request, merging
+				
+				
+
+CI - continus integration servers
+CDe - continus delivery servers
+
+1. Jenkins - CI/CDe server - open source tool - in which we create CI/CDe pipelines
+
+jenkins is called the heart of CICD pipelines
+
+Jenkins
+{{{
+integrating new code with the master/base code - git,bitbucket
+doing testing on the code - junit
+code review - crucible/fisheye
+code quality check - sonarqube
+compiling and building the code - maven
+creating the artifact - maven is a build tool that is used to compile and build java code
+deploying that artifact - scripting
+}}}
+
+
+task:
+
+1. install jenkins on your local system
+2. create an admin account in jenkins
+
+
+jobs in jenkins - build job - build job is a job where we focus on building the artifact of the code along with performing other pipeline tasks as well
+testing, code quality etc.
+
+
+cicd
+
+1. version control system : git, bitbucket (atlassian product - licensed), github (open source)
+2. ci tool - jenkins (opensource)/bamboo (atlassian)/teamcity - lifeline of the devops pipeline
+3. build tool - java - maven/gradle/ant, .net - msbuild/nant 
+4. code reviews tools - crucible (atlassian), gerrit
+5. code quality - sonarqube
+6. artifactry management - nexus (opensource), jfrog(licensed)
+7. testing - unit testing (junit/unit), regression testing (seleniuim/cucmber/qmetry)
+
+
+
+
+
+maven - build tool for java language, open source
+
+the process of creating an artifact out of the code is called building the code
+
+maven is the tool that we use to compile, build and then create an artifact for our java code
+
+maven has its own lifecycle, its own processes and its own goals and phases
+
+pom file - project object model is the mmost fundamental unit of maven, it is always in xml format
+
+think of pom as the configuration file where you specify all the golas, phases etc. that are required to build the java code using maven
+
+The POM contains information about the project and various configuration detail
+used by Maven to build the project(s).
+
+1. POM file (topic no 3 in the pdf)
+2. Build Life Cycle (topic no 4 in the pdf) - sequence of phases whcih defines how the goals will be executed
+3. Repositories (topic 6 in the pdf)
+
+3 lifecycles - clean, default (build) and site
+
+
+clean lifecycle contains 3 phases within itself - pre-clean, clean and post-clean
+
+
+default lifecycle is the primary lifecycle where you build the code
+
+site lifecycle is used to create documentation for your project
+
+
+Maven local repository is a folder location on your machine. It gets created when
+you run any maven command for the first time. .m2  - local repository
+
+poll scm - pollling is the process where jenkins will automatically ask bitbucket for any code change and if there is any it will trigger the job automatically
+
+JUnit - is a testing framework that we use to run unit tests in our code that the develprs prepare
+
+unit testing - this is a process where we break the piece of code into smaller units and then test them individually to perform the basic level of testing
+
+
+sonarqube is a code quality tool - quality determines the concept of how good something is.. now this god can be measured in terms of the security, standards,
+the vulnerable, safe
+
+coding standards - there are some predefined set of rules written for every programming language
+
+
+
+jira - project management tool
+
+in our case, devops CICD pipeline, we use jira as a project stater
+
+every cicd pipeline that we create will start frm jira only and it will end at jira only
+
+task :
+
+1. create a free account on jira cloud
+2. integrate the jira with bitbucket
+
+the project/board that i have chosen is the scrum project
+
+scrum methdology is a process that runs on the concept of sprints - sprints, short term cycles that we work on
+
+the common duration of a sprint is 15 days
+
+jira  - we created a new issue of type story, we assigned it to a sprint, and then we moved it to status type in progress
+from there, we created a new branch in a sprcific repo in bitbucket (coz our jira is integrated with bitbucket)
+then we did the code changes in the branch
+we created a pull request
+we merged the code changes in the master branch
+as soon as we merged the changes in the master branch, jenkins will automatically trigger the job using the POLL SCM trigger
+once jenkins trigger the job, it will run the build and deployment task and acitivites
+after all this is done, we will come backk to jira and move the issue from in progress to done
+
+web server - a server that host our web application
+
+2 apps will never run on the same port no.
+
+only the war files can be deployed on tomcat. not the jar files
+
+
+fisheye and crucible
+
+fisheye - the process of adding bitbucket repos into this tool is done via fisheye
+
+once the repos have been added, the next step is to create reviews
+
+crucible - the proces of creating code reviews on the bitbucket repos that we have added is done via crucible
+
+why do we add/integrate bitbucket with FC? in order to create reviews we should have the code repos integrated with FC to do the same
+
+when we add the code repos, we can select that for which reppo, which branch and which commit do we want to create the review for...
+
+
+session no 12 - 2nd apr - docker
+
+creating virtual servers is called virtualization
+
+containerization - in this concept we create containers
+
+containers are diff from virtual servers
+
+docker is used to create containers
+
+vir - first u have to create a vm, then u have to login into the vm, then u have to start installing the tools on the servers one by one manually
+
+con - just use the tool images and create the container from them autommatically
+
+
+
+session no 14 - ansible - 3rd apr
+
+configuration management tool - chef, puppet and ansible
+
+managing the infra for any project - servers, virtual machines, hardware, networking
+
+most imp thing is to maintain the VM's - CM
+
+IaC - infra as code
+
+ssh - secure shell - two linux machines
+
+cookbook - chef
+
+playbook - ansible
+
+playbook - it is a yaml file (.yml) in which u write basic code that ansible will read and do the task automatically
+
+ 
+http://localhost:8090/sparkjava-hello-world-1.0/hello
+
+aqswdefr1234
+
+Git
+Bitbucket
+Jira
+Jenkins
+Maven
+JUnit
+Tomcat
+Sonarqube
+CICD 
+Ansible
+Docker
+AWS (basic, for DevOps purpose only)
+
+version -> epic -> user stories/bug -> tasks -> sub-tasks
+
+
+to do -> in progress -> code review/pull request created -> pull request merged-> build -> deployed -> done
+
+
+Neelam Poonawala - 20th aug
+
+session 1 - 20th aug - devops theory, basics and fundamentals of agile and devops
+
+session 2 - 21st aug - bitbucket, github, git, cvcs, dvcs, pull request, code review
+
+session 3 - 22nd aug - jira, jira workflow, scrum details
+
+session 4 - 23rd aug - jira integration with bitbucket, jenkins overview, installation and maven project configuration
+
+session 5 - 27th aug - maven build lifecycle, pom.xml, maven repos, maven job config and unit testing implementation using junit
+
+session 6 - 28th aug - sonarqube, installation and integration with jenkins, quality gate setup and sonar jenkins job setup, jenkins master slave, rest api, security features and 
+
+session 7 - 30th aug - apache tomcat, integrating tomcat with jenkins, understanding the complete CICD process in one flow
+
+session 8 - 5th sept - aws services, aws concepts, auto scaling, load balancing, ec2, vpc, cloud formation. cloud watch, developers tool etc.
+
+session 9/10 - 7th sept - aws ebs and other services, docker, docker hub, implementation caommands, database cicd concepts, overall training QnA, doubts clearing sessions
+
+
+
+
+
+Rakesh - DevOps - 6th Jan - Session 1
+
+1. manage our code - codebase - n no. of languages , c, c++, java, python, ruby, go, php, etc.
+
+source code management/version control system
+
+versioning - 3g, 4s, 5 ,6 ,6s, 7, 8, XR, etc.
+
+3g - incmonig
+4s - incmng + outgoing
+doc_1.0, doc_1.1, doc_2.0
+
+CVCS - centralized VCS - slowly obsolete - svn subversion, cvs, perforce, mercurial
+
+DVCS - distributed VCS - git
+
+1 - this is the place where i hit the login+logout button
+2 - this is the place where i hit the logout button
+
+1 2 3 4 5 6 7 8 9 10
+
+one single repository - repo 
+
+commit - saved ur changes in the repo
+update - taken a fresh update from the repo
+
+BP#1 - always take an update/latest changes update in your local machine before you proceed with your further changes in the code
+
+central repo - the centralized server : from where you are fetching the latest changes made by other dev
+										to where you are pushing/putting your changes in the repo so that other dev can get that
+										
+										
+DVCS
+
+Staging area - reviewing area for me before i actually put my changes into the main server
+
+commit and update, push and pull
+
+push - push all the changes from the staging area to the main central server
+pull - fetch the changes ....
+
+
+working copy - local machine - git commands
+both the repo and central repo - hosted somewhere - cloud,server,datacentre - github/bitbucket - front end of git
+
+GitHub - open source
+Bitbucket - license product - Atlassian
+
+Tasks:
+
+1. install Git on your system - Git Bash - command line for git, command prompt 
+2. Create accounts on BB & GitHub
+
+rakesh - 7th jan - session 2
+
+git, bitbucket, github
+
+cloning - duplicate, copying
+
+. - represents current working dir in windows
+
+1. create a new repo in bitbucket
+2. we will create a copy of this repo into our local machine - cloning - git clone url - for first time use when creating a new repo
+3. make some code changes, add a new file in your local machine folder - git add .
+4. now tht i have added the file in the staging area, next step is to save these changes - commit the file - git commit -m "msg"
+5. now that the file has been commited in the staging area, the last step would be to send it to the central repo using the push command - git push origin master
+6. in order to get the changes done by other dev into the central server(by pushing those from the local machine), we will use the pull functionality to get those changes into our local machine
+
+
+tasks:
+1. learn some very basic windows command and linux command - cd, ls, pwd, copy etc. etc. - https://www.digitalcitizen.life/command-prompt-how-use-basic-commands
+2. follow the same steps and replicate them in both BB and Github in your pc and cloud accounts
+
+
+
+rakesh - 8th jan - session no 3 - git, bb, github
+
+git - branching strateg- branching model - how will we create a new branch, how will this branch communiate with the master branch
+
+type of branches-
+
+1. bugfix - to fix some bug in the code
+2. feature - to develop a new feature or functionality
+3. hotfix - quick changes that needs be to be done asap
+4. release - if u want to finally put your changes, take your changes to the final deployment
+
+we created a new feature branch and now we are going to add new code changes in this feature branch
+
+we have a new branch now, we did some code changes into the new feature branch - feature brnahc has some code whioh is not present in the master brnach
+
+Pull Request - this concept talks about merging the feature brnahc into the master branch
+
+add reviwer to that PR 
+
+PR will be approved by the reviwer
+
+i will merge the PR - merge the feature into the master
+i will also delete the feature or close the dfeature simulataneously
+
+then when the merge is complete:
+
+i will verify two thigs:
+
+1. is the feature deleted or not?
+2. the code changes that i did in the feature are present int he master or not?
+
+
+
+tasks:
+replicate the same steps and follow in github and bb both
+
+rakesh - 10th jan - session no 4 - jira
+
+Atlassian - bitbucket, jira 
+
+jira admin certifications, jira admin 
+
+Jira - tickets  - issues which are raised by the mamanger - assigned to individuals within the team - that individual taks/ticket, they have to close the ticket
+our tasks will be to integrate jira with BB
+
+
+jira sprints - normally 15 days of time that we use to work on our project, once these 15 days are over, we will move on to the next sprint
+
+backlog - all the tasks that are pending on which you are supposed to work
+
+issue type - story - i need to develop the login page og my website
+				task - for the login page i need to create username and pswd field 
+				bug - the login page that i created needs to fixed for some issues
+				epic - creating a new website
+				
+boards - scrum, kanban -  jira admin
+
+dashboards - u see all the statistics of your project in jira, widgets
+
+integrating BB with jira and the purpose of the same
+
+DVCS account - bb or github
+
+integrate bb with jira using the same id with just two clicks
+
+jira will automatically list down all your bb repos
+
+now create a new issue in jira, under development option click on create branch link
+
+our pipeline will always start and end on jira
+
+we will create a branch from jira in BB, and then when the task is over, feature branch is merged and deleted, i will close my issue
+
+
+
+
+
+tasks:
+
+1. create an account on jira cloud
+2. create a project in jira, then create backlog issues, sprints, start a sprint and move issues to a new sprint
+3. integrate bb with jira using the dvcs account integrations
+4. create a branch in bb via jira
+
+
+how do we integrate jira with bb - first integration of our pipeline
+
+
+session no 5 - 14th jan - jenkins - CICDe tool
+
+jenkins - heart of cicd pipeline - cicd pipeline is the heart of devops - jenkins heartof devops
+
+
+
+tasks:
+
+1. download and install jenkins on your local system
+2. follow the steps, make admin account and get the jenkins instance up and running on localhost:8080
+3. follow the same steps, create a new job
+4. run it manually
+5. create poll scm trigger in jekins and folllow same steps  and complete the pipeline from gh to jenkins
+
+ideally - jenkins is just a CI tool but we can also perform CD tasks in jenkins using external tools or scripts -- imp
+
+ci - cont intg - cont - doing the same process everyday and intg - intg the newly/freshly developed piece of code into the main/mster code everyday
+
+cde - cont delivery - nearly ready to deploy with almost no human intervention - i need u to open the door - asking for your permissions - approval
+
+deploy our code to dev, qa, all other env but PROD
+
+cd - cont deployment - , not to be confused with continuous delivery - deploying all the way into production without any human intervention. - i have entred you house
+i dont need your permission, i dont need ur approval - i will enter your house
+deploy our code all to way till PROD
+
+
+nearly ready to deploy vs deploying all the way into production -?  
+
+9/10 project implement CDe - rarely CD
+
+devops - polling - poll - pulling somehting
+
+jenkins will automatically start pulling/fetching/polling the changes from the master brnahc of our github/bb repo after every 1 min bas ed on the trigger setting
+
+jira - create branch in ticket - bitbucket/github - we create the banch, do the code change, merge into master - jenkins - our job will be triggered automatically
+
+jira -> bb/gh -> jenkins
+
+
+session 6 - 16th jan - jenkins setup and installation
+
+
+session no 7 - 17th jan - jenkins cont. plus maven
+
+jira -> bb/gh -> jenkins () - CICD
+
+jenkins () -> inside jenkins - CICD - scc, maven build, unit testing, sonarqube analysis, apache tomcat - DEV
+
+1. source code checkout - bb/gh - checkout that code into your jenkins server (local machine) - aligned to the workspace folder in jenkins server 
+
+2. build & unit test - build our code - maven - java based automation tool used to build java code using pre defined build steps
+
+.exe, .war - artifacts that are created when we build our code
+
+c, c++, java, .net, python - build to create an artifact
+
+POM file - maven - project object module - entire configuration of your project - config file for maven - xml - pom.xml
+
+
+tasks:
+
+1. maven pdf - read chapter 3 - pom
+2. maven pdf - read chapter no 4 - build life cycle , chapter 6 - repositories
+3. understnad the diff btwn compile and build your code - java
+4. use the github repo taht u have access to and create a new job in jenkins, fresstyle job using this repo and build the maven code 
+
+
+maven life cycle - predefined step by step process to follow in order to use maven as yout build tool
+vuild life cycle is procedural in nature - it will always follow steps in seq in only
+
+repos in maven - 
+
+
+session no 8 - 21st jan - unit testing
+
+dividing the entire code into small units and then testing it
+this kind of tesing performed by the developers inly and at the time of development only
+run some of kind test cases in the pom.xml
+
+junit - java - development - unit testing framework
+nunit/xunit - .net - development
+
+after the code is built the java files becomaes the class files in the targtet folder
+
+sonarqube - is a code quality management tool - run a set of predefinced rules on your code and give you the statisstics of the same
+
+every dev is asked to follow a certain type of guideline while coding - 
+
+functions - 2+2=4 7586475458454459 + 9494758345836583536 a+b=c - addition - abc 
+
+
+session no 9 - 22nd jan - sonarqube
+
+tasks;
+1. install sonarqube 5.6.7 in your local machine
+2. integrated sq with jenkins
+3. create sonar job in jenkins
+4. run the analysis and view it on sq
+
+default port for SQ is 9000
+
+sonar scanner version 3.0.3
+
+https://github.com/sidvijay18/sonar.git
+sonar.projectKey=Demo
+sonar.projectName=Sample_Demo
+sonar.projectVersion=1.0.0
+sonar.sources=src
+sonar.java.binaries=target/test-classes
+
+session 10 - 23rd jan - sonarqube setup and installation
+
+session 11 - 24th jan - sonarqube contd.
+
+quality gates - you setup a condition based on some metrics/threshold which your code has to follow in order to pass or fail the build
+
+session 12 - 27th jan - apache tomcat - java based apps
+
+we deploy the .war artifacts in the pipeline, web server will be hosting that artifact/application
+
+iis server, oracle weblogic server, jboss, etc. 
+
+apache-tomcat-9.0.16
+
+inside conf - server.xml
+modified the coonectgor port from 8080 to 8090
+
+catalina.bat start
+
+webapps folder inside tomcat is the location where u have to store/save/copy your war file in order to deploy it in tomcat server
+
+http://localhost:8090/sparkjava-hello-world-1.0/hello
+
+1. install tomcat 9.0.16
+2. change the port no 8090
+3. run tomcat 
+4. localhost:8090
+5. tomcat , github, package, copy 
+
+session no 13 - 28th jan - tomcat installations
+
+session no 14 - cicd pipeline - 29th jan
+
+upstream and downstream jobs
+
+sonar -> maven -> tomcat
+-------------------------------------Ops--------------------------------------------
+
+session no 15 - 30th jan - AWS
+
+AWS, Azure , GC, etc. 
+
+aws ec2 - elastic compute cloud - virtual aws servers - aws ec2 instances - virtual machines hosted on aws cloud - dev, qa , uat and prod 
+
+aws s3 - simple storage service - aws s3 buckets - rakeshs3 - 5gb - 
+
+aws vpc - virtual private cloud - aws to give u a private cloud within the cloud space that they own 
+
+session no 16 - 31st jan - ansible, docker - theory & basics
+
+ansible - IT Ops automation 
+
+use-case: env provisioning/app deployment
+
+1. env provisioning/configuration mananement / orchestration - they are all the same thing more or less
+2. app deployment / CDe - same thing more or less
+
+called a playbook - used for automation tasks in diff servers automatically - ansible-playbook - YAML language- 
+
+SSH private/public key - simple secure shell - logging into Linux machines
+
+Docker - containerization - container - 
+
+https://blog.netapp.com/blogs/containers-vs-vms/
+
+uses predefined images to create containers which u can use for your app deployment purpose
+and in order to create custom images, this is where we use a dockerfile 
+
+
+session no 17 - aws ec2 s3 - 3rd feb 2020
+
+
+192.32.0.0 - 192.32.0.10 - subnet
+
+we need ssh to connect to a linux server
+
+putty - tool to connect to linux machines
+
+rakesh.pem as the key pair that got generated using aws console
+.pem file to .ppk file in order to connect to the linux mahcine
+
+public key - private key 
+
+puttygen - putty key generator
+
+2 ip address - public - private
+
+auto scaling
+load balancer
+
+
+default login user is ec2-user
+
+install ansible and docker on this server
+
+sudo su (superuser) - used to become the root user of the linux server which is the admin user in case of a windows mahcine
+yum install ansible 
+
+ansible2
+
+ansible --version - successfully
+
+yum install docker 
+
+docker --version - successfullyy
+
+systemctl start docker
+
+docker run "hello-world"
+
+docker images 
+
+docker ps 
+
+i created an aws inatnce on which i am running docker on which i am using jenkins - aws, docker, jenkins
+
+https://tech.ticketfly.com/our-journey-to-continuous-delivery-chapter-2-run-jenkins-on-docker-49c32532cb7e
+
+
+docker run --name jenkins -p 9080:8080 -v /var/jenkins_home ticketfly/jenkins-example-gradle-build
+
+public id:9080
+
+
+session no 18 - 4th feb 2020 - ansible cont.
+
+ansible is agentless - only on the master server or the main server u have to install ansible, 
+
+cd -
+ls - list
+cat - open the files
+vi - modify, create
+esc i
+do ur chnages
+esc :wq! - to save
+esc :q! - to unsave
+ssh-keygen - ssh key generation public/private
+id_rsa - private
+id_rsa.pub - public 
+rm -rf filemname - delete the file
+mkdir - make dir
+pwd - present work dir
+
+https://codingbee.net/ansible/ansible-a-hello-world-playbook
+
+https://www.decodingdevops.com/how-to-install-ansible-on-aws-ec2-instances/
+
+s3 buckets
+
+session no 19 - 6th feb - aws cont
+
+auto scaling groups and load balancer - application and network - application 
+
+kubernetes - orchestration tool for containers - manage a group of containers
+ansible- orchestration tool for virtual servers
+
+microservices - where we integrate multiple services into one application
+
+
+
+
+
+Pratyush - 19th mar - session 1
+
+scm, vcs, cvcs, dvcs:
+
+code base - most integral part of the sotware industry
+
+source - dev team machine -> prod (end user system)
+
+scm - source code management - tools  - amazon 
+vcs - version control system  - tools - iOS 11, ios13, android v6... , android 6.1... 
+scm/vcs - same thing 
+
+cvcs - centralized vcs - subversion, cvs, mercurial, perforce etc. 
+dvcs - distributed vcs - git 
+
+git - backend - github 
+
+git code is hosted on a github repo
+
+Git GUI - gui based tool
+Git Bash - command line tool
+
+tasks:
+
+1. start learning basic linux commands
+2. install git on your local - git bash
+3. create a github account
+4. cvcs and dvcs 
+5. go thru basic git videos on git official website
+
+20th mar - session 2 
+
+git, git commands, github
+
+1. created a new repo in gh
+
+clone - copy
+
+git clone "repo url"
+
+2. we cloned that repo into our local mahcine using the git clone cmd
+
+i have 2 files in local but only 1 file in gh repo
+
+i will send the new sample file to the gh repo
+
+3 cmds to do this
+
+3. git add . - sample.txt will be added into the staging area
+
+. - cwd - pwd - present/current working directory
+
+pwd 
+
+ls
+
+cd
+
+4. git log, git status
+
+5. git commit -m "initial msg"
+
+changed/modified the code base and committed our changes into the staging area 
+
+6. all the code changes that i have done in my local and commited to the staging area, now is the time to "push" these changes into gh repo
+
+7. git push origin master - what to push, from where and to where
+
+push to push changes from local to master
+pull tp get changes from master to local
+
+git clone vs git pull - pull will only pull the changes, clone will initiate a new repo in the local
+
+tasks:
+
+1. linux cmds
+2. handons of todays training
+3. run all the commands
+
+
+21st march - session 3
+
+branching strategy - in order to facilitate the process of working on new features in parallel with the existing development process, which 
+willl be merged into the master/main code base once the feature has been successfully developed and tested
+
+feature, release, hotfix
+
+hotfix - used for prod issues - create a new branch from the master branch, make the code changes, merge it back into the master and deploy your changes
+into prod
+
+release - used to do code release or deployment into various env. for ex. dev, qa, uat, sit, int, staging, pre-prod, prod
+
+create a release brnach from the master, then they do the release, delete this branch 
+
+
+
+pull request - approval process where in the new commit done into the feature branch has to be approved by the lead/manager/client/customer,
+after which it will  be merged into the master branch
+
+merge - we merged the new code changes from the feature branch into the master branch
+
+tasks:
+
+1. branching strategy
+2. pull request
+3. merge one brnahc into another
+
+22nd mar - session 4 
+
+jenkins - ci - cont. integration
+
+bamboo, jenkins, gitlab, travis ci, circle ci etc. etc. - jenkins - open source 
+
+windows server - jenkinsw01dev/jenkinsw01prod
+
+1. download and install jenkins on your local computer
+2. freestyle job - code checkout
+3. maven project - code checkout, code build
+
+CI - integrate all the steps of code checkout, code build, unit testing, code quality, artifact and then deploy the same
+
+1. we created a new job in jenkins
+2. we added one step in this job of code checkout using the github repo pratyush
+
+
+manage jenkins - where u setup the configuration of the enire jenkins application through the admin user
+
+1. code checkout 
+2. code build - .exe,.war,.dll,.lib,.proj,.py etc. - java based web applications - .war - web archive file - maven - artifacts/zip 
+
+maven - pom.xml to build the code , goals - package 
+
+23rd mar - session 5
+
+maven - build tool used to build java code - .war, .jar, .ear etc. 
+
+goals, phases, lifecycle and pom.xml (heart of maven)
+
+tasks - chapter 3, 4, 6
+
+
+24th mar - session 6 
+
+maven - pom.xml where we write in the config using which we build the code 
+
+unit testing - testing the code base by breaking it into small units
+
+junit i unit testing 
+
+pipeline project - 2 most imp types of jenkins jobs - pipeline and then upstream/downstream
+
+pipeline - 2 types - inline and second is with scm
+
+pipeline - multibranch pipeline
+
+
+PaC - pipeline as code
+
+agent - master and slave another
+
+stages - sonarqube and tomcat
+
+steps - 
+
+
+command line commands via jenkins or automatically - linux .sh shell script and in windows .bat batch script
+
+freestyle -> maven -> pipeline as inline -> pipeline as scm
+
+tasks: pipeline jobs
+
+25th mar - session 7
+
+jenkins job - multibranch pipeline
+
+jobs - PaC - pipeline as code
+
+upstream and downstream - triggers - one job will run based on the upstream trigger and another one will run based on the downstream trigger
+
+Polling - devops - pulling the changes time to time
+
+branching pipeline in github corresponds to the build pipelins in jenkins
+
+sonar job - code quality assessment tool -> maven job - build the code and create .war -> tomcat job - used to deploy the .war 
+
+all the types of jenkins jobs - freestyle, maven, up/down, pip-inline, pip-scm, pip-mb
+
+
+
+agent - master and slave another
+
+26th mar - session 8
+
+sonarqube - open source 
+
+installation
+ran sonar on our localhosted it on localhost:9000
+we iuntegrated sonar with jenkins - 2 way communication
+
+java unit test - junit
+
+
+27th mar - session 9
+
+tomcat - iis, weblogic, jboss, etc, etc
+
+webapps - where u r supposed to cpy paste the executable .war file that is supposed to be deployed on tomcat server
+
+1. code changes : feature branch 
+jenkins - multi branch - build job feature - sonarqube -> maven -> tomcat -> DEV
+
+PR - approved -> merge it into themaster branch
+
+jenkins -> multi branch -> sonarqube > maven> tomcat -> PROD -> end user will see the code changes
+
+CICD pipeline
+
+code changes, code quality, unit test, build, deploy
+
+sonarqube + tomcat 
+
+agent - master and slave another 
+
+28th mar - session 10
+
+agent - master and slave another 
+
+java -jar slave.jar -jnlpUrl http://localhost:8080/computer/slave1/slave-agent.jnlp -secret
+
+
+complete - CICD pipeline - git, github, jenkins, maven, junit, sonarqube, tomcat
+
+50% - DEV 
+
+--------------------------------
+
+OPS - 50%
+
+AWS, Ansible, Docker, Terraform
+
+
+30 mar - session 11
+
+aws - amazon web service, microsoft azure, google cloud, etc. 
+
+aws ec2, s3, vpc, auto-scaling, load balancing, databases, iam
+
+ec2 - ecc- elastic compute cloud - aws servers, ec2 servers, aws instances, ec2 instances
+
+ami - image snapshot with default libs, softwares
+instance type - system config
+instance details - vpc related config
+storage - add extra storage
+tags - key value pair eg. jenkins-master/slave1/slave2
+security group - to setup inbound/outbound access to the server
+key-pair - ssh - public, private key pair - pem file into a ppk (public private key) file 
+
+putty - puttygen
+
+
+tasks:
+
+create ec2 instance
+login into it using key pair genereated by puttygen
+read - public and private IP address, IPv4/IPv6, subnet
+
+
+deafult id - ec2-user
+
+31st mar - session 12
+
+s3 - sss - simple storage service
+
+buckets - storing something
+
+iam - identity access management
+
+databases - rds - relational database service
+
+mssql, mysql, oracle, sybase
+
+
+1st apr - session 13
+
+VPC - virtual private cloud
+
+192.39.46.50-192.39.46.74 - subet 25 ips
+
+ipv4 ipv6 
+
+tasks: aws region and AZ
+
+private public elastic 
+
+elastic ip address - 
+
+TCP/UDP
+
+NACL - network access control layer
+
+NAT, SG, NACL, Route Table, IG, EIP, AZ, Region
+
+
+2nd apr - session 14 
+
+auto scaling, load balancing
+
+1st layer - machine/ec2 instance/linux server/windows server - linux server  - ram, rom, storage gb, cpu, process - 1 
+
+2nd layer - tomcat server - 1,10 
+
+3rd layer - web application 
+
+hits - facebook.com - 1 hit 
+
+
+3rd apr - session 15
+
+virtualization - virtual servers
+containerization - containers
+
+
+docker image -> docker container 
+
+docker build command is use to create new images 
+
+docker pull - download the images from docker hub to the docker container
+
+docker build/docker pull - image 
+
+docker run -> conatinr
+
+
+ec2-user
+sudo su
+yum install docker
+y
+docker --version
+service start docker
+
+
+5th apr - session 16
+
+ansible - automated deployment tool
+
+iac - infrastructure as code
+pac - pipeline as code
+
+code commit - code build - code deploy - code pipeline
+github - jenkins - tomcat instance/ansible - jenkins pipeline 
+
+ansible - it ops automation tool - iac
+
+playbook.yml - file where in u sepcify the code - what tasks do u want to automated
+
+.yml - YAML language
+
+ssh - 22
+
+https://codingbee.net/ansible/ansible-a-hello-world-playbook
+
+
+6th apr - session 17
+
+terraform - hashicorp - iac
+
+automate the provisioning of cloud infrastructure
+
+1. vpc - private sub/pub sub, nat, internet gw, etc etc. 
+
+1. PLAN - creating a plan as to how will u spin up the resourcers in aws
+2. APPLY - bring the plan in execution
+
+multi cloud env. - services into more than one cloud provide in one go
+
+.net,c#,asp.net,vb.net - microsoft based - AZURE
+
+java
+python
+c++
+c
+
+
+multi-tier application - diff level of architecture
+java, python, .net, javascript, sql
+
+host all the apps on AWS, except .net app AZURE
+
+flexibility - one single iac based script automate infra on both clouds 
+
+.tf - yaml language
+
+cloud formation template
+
+
+7th apr - session 18
+
+export PATH=$PATH:/place/with/the/file
+
+create ec2 instance
+download terraform
+setup env path
+install terraform
+use any github repo and modify the .tf file as per the need
+
+
+yum install wget unzip
+wget https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
+unzip ./terraform_0.11.13_linux_amd64.zip -d /usr/local/bin/
+export PATH=$PATH:/usr/local/bin/
+
+Session 1 - 22nd May - DevOps basics, Infinity cycle and pipeline
+
+Session 2 - 23rd May - scm, vcs, git, github
+
+scm - source code management
+vcs - version control system
+repository - repo - the place where we keep all of our code - scm 
+
+vcs - versioning control system
+
+v1.0 hello world
+v2.0 hello india
+v3.0 hello india, how are you
+v4.0 heloo india, i am good
+v5.0 llsdsldsjdsljdsd
+v6.0 skhhsdhsidskdnsd
+
+
+v1.0
+v1.1
+v1.2
+v1.2.0
+v1.2.1
+v1.3.1
+v2.3.1 -> 2 - major, 3 - minor, 1 - bug fix
+
+CVCS, DVCS
+
+centralized VCS, Distributed VCS
+
+CVCS - central repo - all of the final code of the application resides - master repo 
+
+Distributed VCS - master repo
+
+collaboration - when all the devs submit their code so that it can become one single piece of code
+integration - integrating all the code toghther 
+
+
+login.txt -> call add2cart.txt
+add2cart.txt -> call transaction_summary.txt
+transaction_summary.txt -> call payment_summary.txt
+payment_summary.txt -> call logout.txt 
+logout.txt -> call login.txt
+
+coding -> functions, classes, binaries, libraries, dlls, contructs, oops
+
+
+DVCS - distributed VCS - power distribution - dependency remove - central server 
+
+Git - 80% of IT industry Git as a vcs/scm tool - DVCS 
+
+GitHub - master repo - distribution platform - git repos 
+
+
+tasks: 1. create a github account
+		2. local machine install \
+		
+clone - copy 
+
+git clone url - copy the code from github to local
+
+git add filename - add the file to local
+
+git commit -m "msg" - commit the file for sending 
+
+git push origin master -finally push the file to github
+
+
+Seesion 3- github, pull request, merging- 25th may
+
+touch - new file
+vim - add/modify content
+cat - show content
+ls - list files
+cd - change dir
+whoami - user name
+pwd - present working dir
+
+
+git add . - pick all files
+
+git remote add origin - github to git
+
+git pull = git fetch + git merge
+
+
+git pull origin master
+git push origin master
+
+
+working dir -> staging area -> master repo/github
+git add abc.tct -> git commit -m "msg" -> git push 
+
+
+1. u need to get familiar with some basic linux commands
+
+branching 
+
+branches - feature branches are created for the developers so that they can work on those branches, develop their code individually in those 
+branches and then finally when there work is complete they can merge their feature branch into the master branch, so that in the end there will,be again
+just one master branch present in the repo
+
+pull request - code review - reviewing the code changes done in the feature brnahc by the team lead 
+
+pull req merge - changes approve now the changes can be merged into master brnach 
+
+pull request - 
+
+Session 4 - may 27th - git branching, merging, pull request - screen sharing with Abhay
+
+Version Control: Git, GitHub
+•	What is version control?
+•	What is Git?
+•	Why Git for your organization?
+•	Install Git
+•	Common commands in Git
+•	Working with Remote Repositories 
+•	CVCS architecture
+•	DVCS architecture
+•	Branching and Merging in Git
+•	Pull Request concepts
+•	Code Review implementation
+
+Session 5 - may 28th - apache maven - code build , unit testing - junit - java unit testing
+
+function addtocart()
+
+function pay2cust()
+
+fucntion loginlogout()
+
+2 - developer end - unit - imp testing 
+
+unit testing - code 
+
+tester - qa testing - manual testing, automation testing 
+
+test.java - 
+
+maven - build tool for java language, open source
+
+the process of creating an artifact out of the code is called building the code - jar, war - artifact
+
+maven is the tool that we use to compile, build and then create an artifact for our java code
+
+maven has its own lifecycle, its own processes and its own goals and phases
+
+oops - object oriented programming
+
+pom file - project object model is the mmost fundamental unit of maven, it is always in xml format
+
+think of pom as the configuration file where you specify all the goals, phases etc. that are required to build the java code using maven
+
+The POM contains information about the project and various configuration detail
+used by Maven to build the project(s).
+
+java basics - oops, string, int
+
+maven repository - local, remote, central
+
+Maven local repository is a folder location on your machine. It gets created when
+you run any maven command for the first time. .m2  - local repository
+
+central repo - maven itself central repo - libs are stored
+from where maven wwill download the libs
+
+diff btwn local n central 
+
+remote repo is the repo where we host our own generated jar files used for our personal project use which is not available in central repo
+
+maven goals/phases/lifecycle/process
+
+validate -Validating the information ,Validates if the project is correct and if all necessary information is available.
+compile - compilation, Source code compilation is done in this phase.
+Test - Testing - Tests the compiled source code suitable for testing framework.
+package - packaging - This phase creates the JAR/WAR package as mentioned in the packaging in POM.xml.
+install - installation -This phase installs the package in local/remote maven repository.
+Deploy - Deploying - Copies the final package remote repo
+
+mvn clean
+mvn test
+mvn package
+
+Session 6 - may 30th - jenkins ci
+
+ci tool - opensource, bamboo, tfs, teamcity, circle ci, travis ci, etc. 
+
+platform provide - CI 
+
+jobs - are the process that runs our ci 
+
+manage jenkins - admin section
+
+C:\Program Files (x86)\Jenkins\workspace\abhay\complete - absolute path
+
+workspace\abhay\complete
+abhay\complete
+complete
+pom.xml
+jdk setup in env variable - jdk 1.8
+
+jenkins local install setup - localhost:8080 
+
+mahange jenkins- global tool config - java path, git path, maven install automatically
+
+CI process - github clone git repo, all the code will come in workspace, maven build - testing, test case, build package, target- .jar 
+
+
+Session 7 - 1st june - sonarqube - code quality tool
+
+code quality - the code that is written by the dev should pass through a set of rules, that will identify whether this code should be built or not
+
+Version 5.6.7
+
+default - http://localhost:9000/
+
+sonar.projectKey=abhay_sonar
+sonar.projectName=abhay
+sonar.projectVersion=6.7.8
+sonar.sources=src
+sonar.java.binaries=target/test-classes
+
+install sonarqube, integrate with jenkins and run sonar job on jenkins
+
+
+Session 8 - 2nd June - sonrqube contd. - setup, integration and quality gate
+
+
+Code Inspection / Code Quality – SonarQube
+•	What is Code Quality?
+•	How to do Code Quality analysis using Sonarqube?
+•	Installation and integration with Jenkins
+•	Dashboard Setup and Analysis
+•	Quality gate setup 
+•	Sonar Jenkins job setup using run-time quality gates
+
+
+Session 9 - 3rd june - apache tomcat
+
+server - nothgin but where we run our application code
+
+int ques - 
+
+1. cde/cd diff - cover this 
+2. how to change tomcat default port
+
+http://localhost:8090/sparkjava-hello-world-1.0/hello
+
+1. run tomcat on ur local machine - server
+
+
+Session 10 - 5th june - ci cd pipeline - setup tomcat on abhay's system 
+
+Session 11 - 6th june - cicd pipeline - upstream/downstream jobs in jenkins
+
+Session 12 - 8th june - jenkins pac, multi branch pipeline
+
+automation - promote
+
+PaC - pipeline as code - we will make our pipeline in the form of code by writing it in a file - jenkinsfile 
+
+inline - code 
+
+scm - jenkinsfile 
+
+groovy script
+
+
+pipeline {
+   agent any
+
+   tools {
+      maven "maven"
+      jdk "jdk 8"
+                
+   }
+
+   stages {
+   
+   
+   
+   stage('Sonar') {
+         steps {
+   
+             properties 
+         }
+
+      }
+      stage('Build') {
+         steps {
+    
+            git 'https://github.com/sidvijay18/tomcat_pipeline.git'
+
+             bat "mvn package"
+         }
+
+      }
+	  
+	  stage('Tomcat') {
+         steps {
+   
+             bat "copy source dest"
+         }
+
+      }
+   }
+}
+
+Apache Groovy is a Java-syntax-compatible object-oriented programming language for the Java platform.
+
+https://www.jenkins.io/doc/book/pipeline/syntax/#compare
+
+
+scripted - declarative - diff - groovy language
+
+Session 13 - jenkins cont.
+
+freestyle
+
+maven
+
+pipeline - inline
+
+pipeline - scm
+
+multibranch pipeline
+
+
+build executor - used for parallel build execution
+
+master slave architecture in jenkins
+
+Overview of DevOps: 
+•	Why DevOps?
+•	What is DevOps?
+•	DevOps Engineer Skills
+•	DevOps Delivery Pipeline
+•	DevOps Ecosystem 
+
+Version Control: Git, GitHub
+•	What is version control?
+•	What is Git?
+•	Why Git for your organization?
+•	Install Git
+•	Common commands in Git
+•	Working with Remote Repositories 
+•	CVCS architecture
+•	DVCS architecture
+•	Branching and Merging in Git
+•	Pull Request concepts
+•	Code Review implementation
+
+Continuous Integration, Deployment & Delivery – Jenkins
+•	What is CI/CD/CDe?
+•	Why is CICDe required?
+•	Introduction to Jenkins (With Master-Slave Architecture)
+•	Jenkins Management – Installation, Security settings
+•	Jenkins project configuration -  Maven, Jenkinsfile, Multibranch-Pipeline
+
+Build Tool – Maven
+•	Introduction to Maven  
+•	Maven build lifecycle – goals, phases
+•	Pom.xml
+•	Maven repos
+•	Maven job configuration
+
+Continuous Testing – JUnit
+•	Unit testing implementation using junit
+•	integration with Maven 
+•	Test Reports
+•	Test case Analysis
+
+
+Application Servers – TomCat
+•	Application server architecture
+•	Apache Tomcat installation and setup
+•	Integrating Tomcat with Jenkins
+•	Building Delivery Pipeline to deploy an application over the tomcat server
+
+
+
+Code Inspection / Code Quality – SonarQube
+•	What is Code Quality?
+•	How to do Code Quality analysis using Sonarqube?
+•	Installation and integration with Jenkins
+•	Dashboard Setup and Analysis
+•	Quality gate setup 
+•	Sonar Jenkins job setup using run-time quality gates
+
+
+SDLC - software development life cycle 
+
+models:
+
+waterfall 
+
+agile - devops 
+
+
+Session 14 - doubt clearing session, test and interview
+
+1. what is devops? - 1/5
+2. how is agile diff from waterfall? - 1/5 
+3. what are the diff stages in devops? 0/5 - ci , cde, cd
+4. what is a devops pipeline? 0/5 - talk about the pipeline
+5. fundamental diff between cont. delivery & deployment? - 1/5
+6. what is the diff between git & github? - 2/5
+7. is git cvcs or dvcs? explain - 3/5
+8. diff between git fetch & git pull? - 3/5
+9. what is pull request? - 3/5 
+10. how do you create a new branch in a repo? - 3/5
+11. tell me the maven lifecycle? - 2/5
+12. what is pom.xml? - 3/5
+13. what happens when i run the cmnd mvn package? - 3/5
+14. how can i integrate junit with maven? - 0/5
+15. how can i analyse the test cases in junit? - 2/5
+16. how can i achieve code quality? - 1/5
+17. what is quality gate? - 2/5
+18. how will i integrate sonar with jenkins? - 0/5
+19. have you worked on any application server and how to use it? - 2/5
+20. how can i run tomcat on a diff port no.? - 2/5
+21. which cicd tool have you used and how do u create a cicd pipeline in jenkins? - 1/5
+22. any other way of creating pipeline in jenkins? - 2/5
+23. how can i add a new node to jenkins machine? - 2/5
+24. have you ever worked on multibranch pipeline in jenkins? - 2/5
+25. explain the complete cicd pipeline workflow? - 2/5
+
+same ans for q. 4 & 25
+
+
+Session 15 - Cloud 
+
+Overview of Cloud:
+•	What is Cloud?
+•	Why do we need to move to Cloud?
+•	Iaas/Paas/Saas
+•	Which cloud provider to choose (AWS/Azure/GCP etc.)
+
+Session 16 - AWS 
+
+ec2 - elastic compute cloud - ec2 instances (server) - IaaS
+
+virtual machine - which doesnt exist physically  
+
+s3 - simple storage service
+
+Session 17 - VPC
+
+10.10.10.10/32 - cidr notation
+ipv4 ipv6 
+
+cidr notation
+subnets
+ip address /16 /24 /32 
+
+public subnet / private subnet
+
+
+web server / db server 
+
+db1 server 
+name	email 	no. 	usernanme 	pswd 	
+abhay 	abhay@gmail 345656	abhay abhay@123
+web1 server
+tomcat - fb.war 
+
+fb.com -> web server1 -> create account -> db1 server
+
+web1 server -> fb.com
+db1 server -> page not found
+
+
+region, az
+
+1 region - multiple AZ
+ap-south-1a/1b/1c
+
+nat - network adddress translation
+
+elastic ip address - eip
+
+
+cidr
+region
+az
+public private
+nat
+elastic ip
+
+
+Section 18 - alb, asg
+
+application load balancer
+auto scaling group - scale up or scale down the no of servers used by ur application
+
+
+Session 19 - IAM , RDS
+
+mssql, mysql, oracle, - rdbms - relational database managementsystem
+
+nosql - mongodb, cassandra, postgresql 
+
+		userdetails								transactiondetails
+										
+id	address	no.	emailid	dob	pincode				id	payment gateway
+1	delhi	35345345	gfhfgh	12-Dec	2323				1	paytm
+2	jaipur	353455345	dfdf.ghg	12-May	3423				2	dc
+3	lucknow	35353453	ghg.	03-Dec	23423				3	cc
+4	raipur	345345345	ghjghj	09-Mar	2342				4	cash
+5	mumbai	345345345	gfhg	03-Feb	23423				5	google pay
+6	chennai	34534534	fghfgh	30-Aug	234324					
+7	hyderbad	345345435	ghgfh	19-Nov	234324					
+8	goa	34534543	fghfgh	21-Aug	23423					
+9	patna	345345345	fghfgh	4343	3423					
+10	kanpur	3543454	fghfgh	03-Feb	23423					
+
+
+Session 20 - 22/06 - cloudwatch/cloudtrail
+
+sns - simple notification service
+
+ps -ef 
+
+kill -9 pid
+
+Session 21 - 27th june 
+
+AWS interview
+
+Session 22 - 29th June - docker
+
+virtualization -> containerization - tasks
+
+virtual mahcines hosted on cloud -> virtual containers hosted on virtual mahcines on cloud
+
+docker build,pull,run 
+
+
+Session 23/24 - 4th july
+
+
+ec2-user - login for ec2 instances
+sudo su - root user permission
+yum install docker - y
+docker --version  - Docker version 19.03.6-ce, build 369ce74
+service docker start - start
+service docker status - check? docker (pid  2860) is running..
+
+docker pull jenkins
+docker run -p 8080:8080 jenkins
+
+https://tech.ticketfly.com/our-journey-to-continuous-delivery-chapter-2-run-jenkins-on-docker-49c32532cb7e?gi=dd8c39de692e
+
+docker images
+docker ps
+
+
+docker - 1 2 5
+
+ecs - aws - elastic container service - container orchestration - management / kubernetes
+
+
+Containerization Tools – Docker, ECS Fargate
+•	Introduction to Docker Ecosystem
+•	Containerization vs Virtualization
+•	Managing Containers
+•	Running Containers
+•	Docker Hub
+•	Runtime execution with Jenkins
+
+
+Elastic Container Service – container orchestration 
+
+root> ls
+
+cd /etc/ansible > ls
+
+hosts 
+
+vi hosts
+add ip 
+:wq!
+
+server 1 ping server 2 pong
+
+vi - black n white
+
+vim  - colorful
+
+rm - remove 
+rf - recursively forcefully 
+
+Session 25/26 - 5th july - configuration management - ansible
+
+to manage the process of automating the configuration of multiple servers at the same time - ansible - as a CM tool
+
+script - playbook.yml 
+
+yml - YAML - the most easily readable coding language 
+
+ssh - protocol 
+
+
+
+amazon-linux-extras install ansible2 - command to install ansible
+y
+
+
+
+---
+- name: This is a hello-world example
+  hosts: ip of all aws instances that u want to monitor via ansible (ip)
+  tasks:
+    - name: Create a file called '/tmp/testfile.txt' with the content 'hello world'.
+      copy:
+        content: hello worldn
+        dest: /tmp/testfile.txt
+
+
+server 1 - ansible, ssh keygen pub private
+second - /root/.ssh - authorized_keys (first server pub copy)
+
+first - playbook 
+
+
+https://codingbee.net/ansible/ansible-a-hello-world-playbook
+
+
+Session 27/28 - terraform
+
+Terraform - IaC - infrastructure as code
+
+.tf , .yml 
+
+format of the file is yaml only just like ansible
+
+playbook.yml , terraform.tf
+
+https://github.com/terraform-aws-modules/terraform-aws-ec2-instance/blob/master/main.tf
+
+
+terraform is cloud agnostic - aws, azure, gcp, openshift, alibaba - 
+
+
+
+----------------------------------------------------------------------Dev----------------------------------------------------------------------------------
+
+Session no 1 - 09-07 - git, github
+
+scm, vcs, cvcs, dvcs:
+
+code base/source code  - most integral part of the software industry
+
+source - dev team machine -> prod (end user system)
+
+scm - source code management - tools  - amazon 
+vcs - version control system  - tools - iOS 11, ios13, android v6... , android 6.1... 
+scm/vcs - same thing 
+
+VCS architecture:
+
+
+cvcs - centralized vcs - subversion, cvs, mercurial, perforce etc. 
+dvcs - distributed vcs - git - in DVCS, every developer keeps a copy of the master server/repo/code in their local machine/system, concept of cache
+
+git - backend - github 
+
+git code is hosted on a github repo (repositories)
+
+Git GUI - gui based tool
+Git Bash - command line tool - local machine 
+
+tasks:
+
+1. start learning basic linux commands - ls, cd, pwd, touch, mkdir
+2. install git on your local - git bash
+3. go thru basic git videos on git official website
+
+
+
+Session no 2 - 10-07 - git, git commands, github
+
+1. created a new repo in gh - mihir
+
+clone - copy
+
+git clone "repo url"
+
+2. we cloned that repo into our local mahcine using the git clone cmd
+
+i have 2 files in local but only 1 file in gh repo
+
+i will send the new sample file to the gh repo
+
+3 cmds to do this
+
+3. git add . - sample.txt will be added into the staging area
+
+. - cwd - pwd - present/current working directory
+
+pwd 
+
+ls
+
+cd
+
+4. git log, git status
+
+5. git commit -m "initial msg"
+
+changed/modified the code base and committed our changes into the staging area 
+
+6. all the code changes that i have done in my local and commited to the staging area, now is the time to "push" these changes into gh repo
+
+7. git push origin master - what to push, from where and to where
+
+push to push changes from local to master - L2R - local 2 remote, left 2 right
+pull to get changes from master to local - R2L - remote 2 local, right 2 left
+
+git clone vs git pull - pull will only pull the changes, clone will initiate a new repo in the local
+
+1 repo - multiple branches
+
+tasks:
+
+1. linux cmds
+2. handons of todays training
+3. run all the commands
+
+
+
+Session no 3 - 13-07
+
+branching strategy - in order to facilitate the process of working on new features in parallel with the existing development process, which 
+willl be merged into the master/main code base once the feature has been successfully developed and tested
+
+feature, release, hotfix - branching strategy in your project 
+
+hotfix - used for prod issues - create a new branch from the master branch, make the code changes, merge it back into the master and deploy your changes
+into prod
+
+release - used to do code release or deployment into various env. for ex. dev, qa, uat, sit, int, staging, pre-prod, prod
+
+create a release brnach from the master, then they do the release, delete this branch 
+
+git checkout mihir - move to a new branch and do the code changes
+
+git checkout siddharth - move to siddharth
+git merge mihir - merge the changes of mihir branch into siddharth for colloborative development
+git push origin siddharth - send changes from L2R
+
+
+
+pull request - approval process where in the new commit done into the feature branch has to be approved by the lead/manager/client/customer,
+after which it will  be merged into the master branch
+
+merge - we merged the new code changes from the feature branch into the master branch
+
+tasks - hands-on with todays session
+
+
+Session no 4 - 14-07
+
+jenkins - ci - cont. integration
+
+bamboo, jenkins, gitlab, travis ci, circle ci etc. etc. - jenkins - open source 
+
+windows server - jenkinsw01dev/jenkinsw01prod
+
+1. download and install jenkins on your local computer
+2. freestyle job - code checkout
+3. maven project - code checkout, code build
+
+CI - integrate all the steps of code checkout, code build, unit testing, code quality, artifact and then deploy the same
+
+1. we created a new job in jenkins
+2. we added one step in this job of code checkout using the github repo
+
+
+manage jenkins - where u setup the configuration of the enire jenkins application through the admin user
+
+1. code checkout 
+2. code build - .exe,.war,.dll,.lib,.proj,.py etc. - java based web applications - .jar, .war - web archive file - maven - artifacts/zip 
+
+maven - pom.xml to build the code , goals/phase - package 
+
+java - 1.8
+
+git - 
+
+maven - install automatically
+junit - unit testing framework used to test java code
+
+code checkout, code build, unit testing
+
+
+1. install and setup jenkins on ur local system
+
+
+https://github.com/sidvijay18/maven
+
+
+Session 5 - 15-07
+
+build ur code, run unit test cases in ur code using junit
+
+testing - unit, penetration, regression, black box
+
+maven - build tool used to build java code - .war, .jar, .ear etc. 
+
+goals, phases, lifecycle and pom.xml (heart of maven)
+
+tasks - chapter 3, 4, 6
+
+maven - can u define or describe the maven build lifecycle?
+
+aven - pom.xml where we write in the config using which we build the code 
+
+unit testing - testing the code base by breaking it into small units
+
+junit is unit testing 
+
+
+Session 6 - 17-07
+
+pipeline project - most imp types of jenkins jobs - pipeline
+
+pipeline - 2 types - inline and second is with scm
+
+pipeline - multibranch pipeline - to run parallel builds for all the branches present in the repo - used for big projects ONLY
+
+PaC - pipeline as code
+ 
+build trigger -
+ 
+poll scm - polling means looking out for a change in a repo cont. after a pre defined time interval
+
+shcedule - * * * * * - polling after every 1 min
+
+
+Session 7 - 18-07
+
+CD - cont. delivery/deployment
+
+Apache Maven 
+Apache Tomcat - application server/web server
+
+system/machine/instance & server 
+
+server - is an instance that can host an application
+how to change or run tomcat on a diff port no. - installation
+
+how do we deploy our app on tomcat?
+
+
+https://github.com/sidvijay18/tomcat_pipeline
+
+http://localhost:8090/sparkjava-hello-world-1.0/hello
+
+complete cicd pipeline
+
+
+Session 8 - 20-07
+
+Sonarqube - code quality tool
+
+
+manage plugin - download sonar plugins
+
+sonar scanner , sonar job
+
+adding sonar scanner using latest version in install automatically
+
+sonar server
+
+
+sonar.projectKey=sonar
+sonar.projectName=sonar
+sonar.projectVersion=1.0.0
+sonar.sources=src
+sonar.java.binaries=target/test-classes
+
+
+Session 9 - 22-07
+
+Sonar cont. -quality gate setup and run time analysis on Jenkins
+
+
+Session 10 - 23-07
+
+master slave in jenkins, build executors
+
+to perform any activity in jenkins- running the jobs we need a build executor that can execute the build, build queue
+
+
+
+Session 11 - 24-07
+
+Theory Exam - Interview Preparation
+
+
+Session 12 - 25-07
+
+Practical Exam - Lab Hands-on - Interview Round
+
+----------------------------------------------------------------------Ops----------------------------------------------------------------------------------
+
+Session 13 - 28-07 
+
+aws - amazon web service 80%, microsoft azure, google cloud, etc. 
+
+aws ec2, s3, vpc, auto-scaling, load balancing, iam
+
+ec2 - ecc- elastic compute cloud - aws servers, ec2 servers, aws instances, ec2 instances
+
+ami - image snapshot with default libs, softwares
+instance type - system config
+instance details - vpc related config
+storage - add extra storage
+tags - key value pair eg. jenkins-master/slave1/slave2
+security group - to setup inbound/outbound access to the server
+key-pair - ssh - public, private key pair - pem file into a ppk (public private key) file 
+
+by default wehn u create akey pair in aws it will create a pem file
+convert this pem file into a ppk file
+ppk file - primary private key file used to login into our aws instance
+putty - puttygen
+
+yum is a utility to install software in a linuxmachine
+
+
+apache webserver - httpd
+yum install httpd
+cd /var/www/html/
+
+vi index.html
+
+hi hello
+service httpd restart
+
+
+tasks:
+
+learn some basic linux commands and protocols - http, https, ssh, tcp,udp, etc...
+create aws account
+create ec2 instance
+login into it using key pair genereated by puttygen
+read - public and private IP address, IPv4/IPv6, subnet
+
+
+deafult id - ec2-user
+
+
+pay-as-you-go pricing model
+
+400gb out of 1tb
+500gb
+700gb 
+300gb 
+
+upfront investment of 5k for that enitre 1tb
+
+
+Session 14 - 29-07 
+
+S3 buckets - simple storage service
+
+
+Session 15 - 30-7
+
+IAM roles
+
+identity access management
+
+groups - diff groups for diff teams
+roles - same as of user based access by assigning policies, but this time to an aws service instead of a user
+users - add users of same team in a single group to manage their access accordingly
+policies - predefined policies created by aws for giving specific access to one or multiple services 
+
+
+Session 16 & 17 - 01-08
+
+vpc - virtual private cloud
+
+netowrking concepts - ip address, ipv4, ipv6, cidr range, cal the cidr range, subnets, diff btwn public & private ip, 
+
+10.0.0.0 -  255.255.255.255/16
+
+2^8 = 256 - 1 = 255
+
+10.0.0.0/16 = 10.0.0.0 - 10.0.255.255
+
+10.0.0.0/8 = 10.0.0.0 - 10.255.255.255
+
+10.0.0.0/24 = 10.0.0.0 - 10.0.0.255
+
+10.0.0.0/32 = 10.0.0.0
+
+10.0.0.0/20 = 10.0.0.0 - 10.0.15.255
+
+
+eip - public ip remains the same
+
+
+
+lb/asg - load balancer/auto scaling group
+
+
+Session 18 - 0408 - Ansible
+
+root> ls
+
+cd /etc/ansible > ls
+
+hosts 
+
+vi hosts
+add ip 
+:wq!
+
+server 1 ping server 2 pong
+
+vi - black n white
+
+vim  - colorful
+
+rm - remove 
+rf - recursively forcefully 
+
+- configuration management - ansible
+
+to manage the process of automating the configuration of multiple servers at the same time - ansible - as a CM tool
+
+script - playbook.yml 
+
+yml - YAML - the most easily readable coding language 
+
+ssh - protocol 
+
+
+
+amazon-linux-extras install ansible2 - command to install ansible
+y
+
+
+
+---
+- name: This is a hello-world example
+  hosts: ip of all aws instances that u want to monitor via ansible (ip)
+  tasks:
+    - name: Create a file called '/tmp/testfile.txt' with the content 'hello world'.
+      copy:
+        content: hello worldn
+        dest: /tmp/testfile.txt
+
+
+server 1 - ansible, ssh keygen pub private
+second - /root/.ssh - authorized_keys (first server pub copy)
+
+first - playbook 
+
+
+https://codingbee.net/ansible/ansible-a-hello-world-playbook
+
+
+Session 19 - 0508 - Terraform
+
+IaC - infrastructure as code
+
+
+
+
+module "ec2_cluster" {
+  source                 = "terraform-aws-modules/ec2-instance/aws"
+  version                = "~> 2.0"
+
+  name                   = "my-cluster"
+  instance_count         = 5
+
+  ami                    = "ami-ebd02392"
+  instance_type          = "t2.micro"
+  key_name               = "user1"
+  monitoring             = true
+  vpc_security_group_ids = ["sg-12345678"]
+  subnet_id              = "subnet-eddcdzz4"
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+
+
+
+playbook.yml - yaml extension - ansible 
+ 
+terraform.tf - tf extension - terraform
+
+
+yum install wget
+
+wget  https://releases.hashicorp.com/terraform/0.12.2/terraform_0.12.2_linux_amd64.zip
+
+
+export PATH=$PATH:/place/with/the/file
+
+create ec2 instance
+download terraform
+setup env path
+install terraform
+use any github repo and modify the .tf file as per the need
+
+
+yum install wget unzip
+wget https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
+unzip ./terraform_0.11.13_linux_amd64.zip -d /usr/local/bin/
+export PATH=$PATH:/usr/local/bin/
+
+https://github.com/terraform-aws-modules/terraform-aws-ec2-instance/blob/master/main.tf
+
+
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@sidvijay18 
+terraform-aws-modules
+/
+terraform-aws-ec2-instance
+16
+267606
+Code
+Issues
+13
+Pull requests
+4
+Actions
+Security
+Insights
+terraform-aws-ec2-instance/examples/basic/main.tf
+@antonbabenko
+antonbabenko Added user_data_base64 (fixed #117) (#137)
+Latest commit 6dd30ea on Nov 19, 2019
+ History
+ 4 contributors
+@antonbabenko@tiberiuana@chenrui333@jjardon
+175 lines (138 sloc)  3.85 KB
+  
+provider "aws" {
+  region = "eu-west-1"
+}
+
+locals {
+  user_data = <<EOF
+#!/bin/bash
+echo "Hello Terraform!"
+EOF
+}
+
+##################################################################
+# Data sources to get VPC, subnet, security group and AMI details
+##################################################################
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnet_ids" "all" {
+  vpc_id = data.aws_vpc.default.id
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+
+  owners = ["amazon"]
+
+  filter {
+    name = "name"
+
+    values = [
+      "amzn-ami-hvm-*-x86_64-gp2",
+    ]
+  }
+
+  filter {
+    name = "owner-alias"
+
+    values = [
+      "amazon",
+    ]
+  }
+}
+
+module "security_group" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 3.0"
+
+  name        = "example"
+  description = "Security group for example usage with EC2 instance"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_rules       = ["http-80-tcp", "all-icmp"]
+  egress_rules        = ["all-all"]
+}
+
+resource "aws_eip" "this" {
+  vpc      = true
+  instance = module.ec2.id[0]
+}
+
+resource "aws_placement_group" "web" {
+  name     = "hunky-dory-pg"
+  strategy = "cluster"
+}
+
+resource "aws_kms_key" "this" {
+}
+
+resource "aws_network_interface" "this" {
+  count = 1
+
+  subnet_id = tolist(data.aws_subnet_ids.all.ids)[count.index]
+}
+
+module "ec2" {
+  source = "../../"
+
+  instance_count = 5
+
+  name          = "example-normal"
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "c5.large"
+  subnet_id     = tolist(data.aws_subnet_ids.all.ids)[0]
+  //  private_ips                 = ["172.31.32.5", "172.31.46.20"]
+  vpc_security_group_ids      = [module.security_group.this_security_group_id]
+  associate_public_ip_address = true
+  placement_group             = aws_placement_group.web.id
+
+  user_data_base64 = base64encode(local.user_data)
+
+  root_block_device = [
+    {
+      volume_type = "gp2"
+      volume_size = 10
+    },
+  ]
+
+  ebs_block_device = [
+    {
+      device_name = "/dev/sdf"
+      volume_type = "gp2"
+      volume_size = 5
+      encrypted   = true
+      kms_key_id  = aws_kms_key.this.arn
+    }
+  ]
+
+  tags = {
+    "Env"      = "Private"
+    "Location" = "Secret"
+  }
+}
+
+module "ec2_with_t2_unlimited" {
+  source = "../../"
+
+  instance_count = 1
+
+  name          = "example-t2-unlimited"
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t2.micro"
+  cpu_credits   = "unlimited"
+  subnet_id     = tolist(data.aws_subnet_ids.all.ids)[0]
+  //  private_ip = "172.31.32.10"
+  vpc_security_group_ids      = [module.security_group.this_security_group_id]
+  associate_public_ip_address = true
+}
+
+module "ec2_with_t3_unlimited" {
+  source = "../../"
+
+  instance_count = 1
+
+  name                        = "example-t3-unlimited"
+  ami                         = data.aws_ami.amazon_linux.id
+  instance_type               = "t3.large"
+  cpu_credits                 = "unlimited"
+  subnet_id                   = tolist(data.aws_subnet_ids.all.ids)[0]
+  vpc_security_group_ids      = [module.security_group.this_security_group_id]
+  associate_public_ip_address = true
+}
+
+module "ec2_with_network_interface" {
+  source = "../../"
+
+  instance_count = 1
+
+  name            = "example-network"
+  ami             = data.aws_ami.amazon_linux.id
+  instance_type   = "c5.large"
+  placement_group = aws_placement_group.web.id
+
+  network_interface = [
+    {
+      device_index          = 0
+      network_interface_id  = aws_network_interface.this[0].id
+      delete_on_termination = false
+    }
+  ]
+}
+
+# This instance won't be created
+module "ec2_zero" {
+  source = "../../"
+
+  instance_count = 0
+
+  name                   = "example-zero"
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "c5.large"
+  subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
+  vpc_security_group_ids = [module.security_group.this_security_group_id]
+}
+© 2020 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+
+
+https://github.com/terraform-aws-modules/terraform-aws-ec2-instance/tree/master/examples/basic
+
+
+$ terraform init
+$ terraform plan
+$ terraform apply
+
+
+docker image -> docker container 
+
+docker build command is use to create new images 
+
+docker pull - download the images from docker hub to the docker container
+
+docker build/docker pull - image 
+
+docker run -> conatinr
+
+
+Session 20 - Docker - 0708
+
+Docker 
+
+java version 1.8
+java version 1.7
+
+tomcat 9
+tomcat 8
+
+n number libs 
+n-x number libs
+
+docker - sid should create a container and run his app on it, share the same container image with mihir and then mihir should test it on his container created 
+by using the same image that sid has shared with mihir
+
+in aws - u created a server/instance out of an image
+docker - u ll create a container out of an image
+
+containerization vs virtualization
+
+
+
+ec2-user
+sudo su
+yum install docker
+y
+docker --version
+systemctl start docker
+docker pull jenkins
+docker run -p 8080:8080 jenkins
+
+
+Mock Test/Exam/Interview : 0908
+
+1. create an ec2 instance and install httpd and run a sample index.html in it - done
+2. create 2 ec2 instances and connect them via ansible - done
+3. Install docker on a ec2 instance and run jenkins on a container - done
+4. create an IAM user and give him read access to s3 bucket and share the id/pswd - done
+5. deploy a war file in tomcat with the content "Hi India" - done
+6. create a project in jenkins and run the sonarqube analysis with details on snar dashboard - project name will be "sonar_demo" - done with quality gate setup
+7. create the load balancer setup
+
+
