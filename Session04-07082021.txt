@@ -1,0 +1,43 @@
+Session 04 - 07/08
+
+git config user.name "sidvijay18"
+
+git config user.email "vijaysiddharth89@gmail.com"
+
+git init 
+
+branching strategy:
+
+PR - Pull Request 
+
+merge - 
+
+Code Review - PR raise - approve - merge - deployment 
+
+master/main
+staging
+dev
+
+
+master/main
+dev
+feature/*
+
+
+main/master/main
+dev
+hotfix/bufix
+
+main/master/main
+staging
+integration /int 
+dev
+
+
+feature/* - dev local
+dev - dev env
+staging  - qa/uat/pre-prod env
+master/main - prod 
+
+
+
